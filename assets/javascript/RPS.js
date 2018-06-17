@@ -19,7 +19,7 @@ let pTwoL = 0;
 let pTwoName = "";
 let pTwoChoice = "";
 let theWinnerIs = false;
-let turn;
+let turn = [];
 let rps = ['Rock', 'Paper', 'Scissors'];
 let readyToPlay = false;
 let pConnected = 0;
@@ -39,14 +39,15 @@ connectionsRef.on("value", function(snap) {
     console.log(pConnected);
 });
 
-database.ref().on("value", function(snapshot) {
-        if ((snapshot.child("pOneName").exists) && (snapshot.child("pTwoName").exists)) {
+database.ref().on("child_added", function(snapshot) {
+    
             $(".pOneName").html((snapshot.val().player.one.pOneName));
             $(".pTwoName").html((snapshot.val().player.two.pTwoName));
-        }
+        
 
         $("#pOneStats").html("Wins: " + (snapshot.val().player.one.pOneW) + " Loss: " + (snapshot.val().player.one.pOneL));
         $("#pTwoStats").html("Wins: " + (snapshot.val().player.two.pTwoW) + " Loss: " + (snapshot.val().player.two.pTwoL));
+        console.log(snapshot.val())
     }, function(errorObject) {
         console.log("Error! " + errorObject.code);
 
@@ -55,24 +56,25 @@ database.ref().on("value", function(snapshot) {
 $("#startGame").on("click", function() {
     let name = $("#userName").val().trim();
 
-    if(pOneName == "") {
+    if(pOneName === "") {
         pOneName = name;
     }
-    else if(pTwoName == "") {
+    else if(pTwoName === "") {
         pTwoName = name;
     }
 
+    console.log(pOneName)
     database.ref().push({
         player:{
             one:{
                 pOneName: pOneName,
                 pOneW: pOneW,
-                pOneL: pOneL,
+                pOneL: pOneL
             },
             two:{
                 pTwoName: pTwoName,
                 pTwoW: pTwoW,
-                pTwoL: pTwoL,
+                pTwoL: pTwoL
             }
         },
         turn: turn
